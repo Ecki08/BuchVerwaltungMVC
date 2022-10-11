@@ -1,0 +1,18 @@
+﻿<Window x:Class="SqlExecutor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SqlExecutor"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <WrapPanel>
+        <Button x:Name="SelectScriptButton" Content="Select SQL Script" Width ="200" HorizontalAlignment="Left" Margin="5,5,5, 5" VerticalAlignment="Top" Click="SelectScriptButton_Click"/>
+        <TextBox TextWrapping="Wrap" Text="" Width="770" Height="200" Margin="5,5,5,5" IsEnabled="False" Name="ScriptTextBox"/>
+        <WrapPanel Orientation="Horizontal">
+            <TextBlock Width="110" Margin="5,5,5,5">ConnectionString:</TextBlock>
+            <TextBlock Width="650" Margin="5,5,5,5" Name="ConnectionTextBox"/>
+        </WrapPanel>
+        <Button Name="ExecuteScriptButton" Content="Execute SQL Script" Width="200" Margin="5,5,5,5" Click="ExecuteScriptButton_Click"/>
+    </WrapPanel>
+</Window>

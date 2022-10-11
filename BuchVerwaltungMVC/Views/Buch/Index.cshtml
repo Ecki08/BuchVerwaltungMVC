@@ -1,0 +1,53 @@
+﻿@using BuchVerwaltungMVC.Models
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model BuchListeModel 
+
+<h4 style="float:left;width:49.5%;" border="1">Datensätze aktuelle Bücher:</h4>
+<h4 style="float:right;width:49.5%;" border="1">Datensätze archivierte Bücher:</h4>
+
+<table class="table table-hover mb-0" style="float:left;width:49.5%;" border="1">
+    <thead>
+        <tr>
+            <td>Titel</td>
+            <td>Autor</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var buch in Model.AktuelleBuecherListe)
+        {
+            <tr>
+                <td>@buch.Titel</td>
+                <td>@buch.Autor</td>
+                <td>@Html.ActionLink("Verschiebe", "VerschiebeVonAktuellNachArchiviert", "Buch", buch)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<table class="table table-hover mb-0" style="float:right;width:49.5%;" border="1">
+    <thead>
+        <tr>
+            <td>Titel</td>
+            <td>Autor</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var buch in Model.ArchivierteBuecherListe)
+        {
+            <tr>
+                <td>@buch.Titel</td>
+                <td>@buch.Autor</td>
+                <td>@Html.ActionLink("Verschiebe", "VerschiebeVonArchiviertNachAktuell", "Buch", buch)</td>
+            </tr>
+        }
+    </tbody>
+</table>
