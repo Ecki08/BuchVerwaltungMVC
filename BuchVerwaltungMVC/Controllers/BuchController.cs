@@ -8,27 +8,22 @@ using System;
 namespace BuchVerwaltungMVC.Controllers
 {
     public class BuchController : Controller
-    {
-        // In folgendem Multiline Comment ist der Code zu sehen, der für Dependency Injection benötigt wird
-        // Da dieser allerdings einen Fehler erzeugt, nur als Kommentar hier angeführt
-        // Der Code würde die Funktion GetConnectionString() ersetzen
+    { 
 
-        /*private readonly KonfigurationsLeser _konfigurationsLeser;
+        private readonly KonfigurationsLeser _konfigurationsLeser;
 
+        // Erstellen des BuchControllers, der als Parameter die Klasse Konfigurationsleser übergeben bekommt
+        // Diese wird in der hierüber deklarierten Variablen _konfigurationsLeser gespeichert
         public BuchController(KonfigurationsLeser konfigurationsleser)
         {
             this._konfigurationsLeser = konfigurationsleser;
         }
 
+        // Connection String wird per Dependency Injection ausgelesen -> Connection String wird in appsettings.json gespeichert & steht somit nicht mehr im Quellcode
+        // Auslesen des Connection Strings zur Datenbank durch Aufruf der von der Klasse KonfigurationsLeser bereitgestellten Funktion LiesDatenbankVerbindungZurMariaDB()
         public string GetConnectionString()
         {
             return _konfigurationsLeser.LiesDatenbankVerbindungZurMariaDB();
-        }*/
-
-        // Auslesen des Connection Strings zur Datenbank
-        public string GetConnectionString()
-        {
-            return "Server=localhost;User ID=root;Password=password;Database=BuchDB;"; 
         }
 
         public IActionResult Index()

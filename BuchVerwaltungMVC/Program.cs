@@ -1,10 +1,15 @@
-using BuchVerwaltungMVC;
+using BuchVerwaltungMVC.Konfigurationsleser;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 //builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IKonfigurationsLeser, KonfigurationsLeser>();
+
+builder.Services.AddSingleton<KonfigurationsLeser>();
+builder.Services.AddScoped<KonfigurationsLeser>();
+builder.Services.AddTransient<KonfigurationsLeser>();
 
 var app = builder.Build();
 
