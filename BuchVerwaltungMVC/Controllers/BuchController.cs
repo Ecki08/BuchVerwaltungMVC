@@ -9,6 +9,10 @@ namespace BuchVerwaltungMVC.Controllers
 {
     public class BuchController : Controller
     {
+        // In folgendem Multiline Comment ist der Code zu sehen, der für Dependency Injection benötigt wird
+        // Da dieser allerdings einen Fehler erzeugt, nur als Kommentar hier angeführt
+        // Der Code würde die Funktion GetConnectionString() ersetzen
+
         /*private readonly KonfigurationsLeser _konfigurationsLeser;
 
         public BuchController(KonfigurationsLeser konfigurationsleser)
@@ -21,28 +25,33 @@ namespace BuchVerwaltungMVC.Controllers
             return _konfigurationsLeser.LiesDatenbankVerbindungZurMariaDB();
         }*/
 
+        // Auslesen des Connection Strings zur Datenbank
         public string GetConnectionString()
         {
-            return "Server=localhost;User ID=root;Password=password;Database=BuchDb;";
+            return "Server=localhost;User ID=root;Password=password;Database=BuchDB;"; 
         }
 
         public IActionResult Index()
         {
             string connectionString = this.GetConnectionString();
-            BuchListeModel model = LeseDatenAusDatenbankInModelEin(connectionString);
-
+            // Einlesen der Daten aus der Datenbank in das Model
+            BuchListeModel model = LeseDatenAusDatenbankInModelEin(connectionString);   
+            // Laden der View
             return View(model);
 
         }
 
         public BuchListeModel LeseDatenAusDatenbankInModelEin(string connectionString)
         { 
+            // Erzeugen einer Instanz der Klasse BuchRepository, um Zugriff auf die notwendigen Funktionen zum Auslesen der Datenbanktabellen zu bekommen
             var repository = new BuchRepository(connectionString);
 
+            // Erstellen von 2 Listen, welche die Datensätze der Tabellen aktuelle_buecher und archivierte_buecher speichern sollen
             List<BuchDTO>? aktuelleBuecherListe = new();
             List<BuchDTO>? archivierteBuecherListe = new();
 
-            //Auslesen der beiden Tabellen und befüllen der Listen mit den Daten in zwei Unterschiedlichen Threads (zur Parallelisierung)
+            // Auslesen der Datensätze aus den 2 Datenbank-Tabellen und speichern der Datensätze in den zwei oben erstellten Listen
+            // Zur Parallelisierung erfolgt dies in 2 Threads
             Thread leseAlleAktuellenBuecherEin = new Thread(() =>
             {
                 aktuelleBuecherListe = repository.HoleAlleAktuelleBuecher();
@@ -53,7 +62,7 @@ namespace BuchVerwaltungMVC.Controllers
                 archivierteBuecherListe = repository.HoleAlleArchivierteBuecher();
             });
 
-            //Ausführen der oben erstellten Threads
+            // Ausführen der 2 oben erstellten Threads
             leseAlleAktuellenBuecherEin.Start();
             leseAlleArchiviertenBuecherEin.Start();
 
@@ -66,27 +75,30 @@ namespace BuchVerwaltungMVC.Controllers
         public void VerschiebenInAndereTabelle(BuchDTO buch, string Ursprungstabelle, string Zieltabelle)
         {
             string connectionString = GetConnectionString();
-            //Repository zum verschieben wird Initialisiert
+            // Erzeugen einer Instanz der Klasse BuchRepository, um Zugriff auf die notwendigen Funktionen zum Verschieben der Datensätze zwischen den Tabellen zu bekommen
             var repository = new BuchRepository(connectionString);
-            repository.VerschiebeBuchInAndereTabelle(buch, Ursprungstabelle, Zieltabelle); //Verschieben des Buches (Löschen aus der 1. Tabelle und Einfügen in die andere Tabelle) wird ausgeführt
+            // Verschieben eines Datensatzes in eine andere Tabelle
+            repository.VerschiebeBuchInAndereTabelle(buch, Ursprungstabelle, Zieltabelle); 
         }
 
+        // Verschieben eines Datensatzes von der Tabelle archivierte_buecher in die Tabelle aktuelle_buecher
         public IActionResult VerschiebeVonArchiviertNachAktuell(BuchDTO buch)
         {
-            VerschiebenInAndereTabelle(buch, "archivierte_buecher", "aktuelle_buecher"); //Start des verschiebens eines archivierten Buches, zu einem aktuellen Buch
-
-            BuchListeModel model = LeseDatenAusDatenbankInModelEin(GetConnectionString()); //Neues Laden der beiden Tabellen, nach obiger Verschiebung
-
-            return View("Views/Buch/Index.cshtml", model); //erstellen der View
+            VerschiebenInAndereTabelle(buch, "archivierte_buecher", "aktuelle_buecher");
+            // Erneutes Einlesen der Daten aus beiden Tabellen
+            BuchListeModel model = LeseDatenAusDatenbankInModelEin(GetConnectionString()); 
+            // Erstellen der View
+            return View("Views/Buch/Index.cshtml", model); 
         }
 
+        // Verschieben eines Datensatzes von der Tabelle aktuelle_buecher in die Tabelle archivierte_buecher
         public IActionResult VerschiebeVonAktuellNachArchiviert(BuchDTO buch)
         {
-            VerschiebenInAndereTabelle(buch, "aktuelle_buecher", "archivierte_buecher"); //Start des verschiebens eines aktuellen Buches, zu einem archivierten Buch
-
-            BuchListeModel model = LeseDatenAusDatenbankInModelEin(GetConnectionString()); //Neues Laden der beiden Tabellen, nach obiger Verschiebung
-
-            return View("Views/Buch/Index.cshtml", model); //erstellen der View
+            VerschiebenInAndereTabelle(buch, "aktuelle_buecher", "archivierte_buecher"); 
+            // Erneutes Einlesen der Daten aus beiden Tabellen
+            BuchListeModel model = LeseDatenAusDatenbankInModelEin(GetConnectionString()); 
+            // Erstellen der View
+            return View("Views/Buch/Index.cshtml", model); 
         }
 
 

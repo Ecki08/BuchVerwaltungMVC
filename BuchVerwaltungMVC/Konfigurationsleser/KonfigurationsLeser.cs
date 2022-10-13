@@ -3,7 +3,7 @@
 namespace BuchVerwaltungMVC.Konfigurationsleser
 {
     // Die Klasse Konfigurationsleser liest die Konfiguration aus und damit auch den ConnectionString zur Datenbank
-    // Damit wird das Design-Prinzip Dependency Injection realisiert
+    // Damit würde das Design-Prinzip Dependency Injection realisiert werden
     public class KonfigurationsLeser : IKonfigurationsLeser
     {
         private readonly IConfiguration _configuration;

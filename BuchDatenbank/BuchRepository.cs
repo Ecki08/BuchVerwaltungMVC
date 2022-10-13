@@ -6,39 +6,40 @@ namespace BuchDatenbank
     {
         public string _connectionString;
 
+        // Setzen des Connection Strings zur Datenbank
         public BuchRepository(string connectionString)
         {
             this._connectionString = connectionString;
         }
 
-
+        // Auslesen aller Datensätze aus der Tabelle aktuelle_buecher 
         public List<BuchDTO> HoleAlleAktuelleBuecher()
         {
-            return HoleAlleBuecherVonEinerTabelle("aktuelle_Buecher"); //Liest alle aktuellen Bücher
+            return HoleAlleDatensaetzeEinerTabelle("aktuelle_buecher");
         }
 
+        // Auslesen aller Datensätze aus der Tabelle archivierte_buecher 
         public List<BuchDTO> HoleAlleArchivierteBuecher()
         {
-            return HoleAlleBuecherVonEinerTabelle("archivierte_Buecher"); //Liest alle archivierten Bücher
+            return HoleAlleDatensaetzeEinerTabelle("archivierte_buecher");
         }
 
-
-        public List<BuchDTO> HoleAlleBuecherVonEinerTabelle(string TabellenName)
+        // Aulesen aller Datensätze aus einer Tabelle
+        public List<BuchDTO> HoleAlleDatensaetzeEinerTabelle(string tabellenname)
         {
             List<BuchDTO> Buecher = new();
 
-            //Hier wird die Datenbankabfrage gestartet und die Abfrage zum Auslesen einer der beiden tabellen wird ausgeführt
+            // Start und Ausführung der Datenbankabfrage zum Auslesen aller Datensätze einer Tabelle 
             using var db_Verbindung = new MySqlConnection(_connectionString);
             db_Verbindung.Open();
-            string queryBuecher = "SELECT titel, autor FROM " + TabellenName;
-            using var commando = new MySqlCommand(queryBuecher, db_Verbindung);
+            string query = "SELECT titel, autor FROM " + tabellenname;
+            using var commando = new MySqlCommand(query, db_Verbindung);
             using var reader = commando.ExecuteReader();
 
             while (reader.Read())
             {
                 BuchDTO buch = new BuchDTO
                 {
-                    //Id = (int)reader["id"],
                     Autor = (string?)reader["autor"],
                     Titel = (string?)reader["titel"]
                 };
@@ -51,18 +52,20 @@ namespace BuchDatenbank
             return Buecher;
         }
 
+        // Verschieben eines Datensatzes von einer Tabelle in eine andere Tabelle
         public void VerschiebeBuchInAndereTabelle(BuchDTO buch, string UrsprungsTabellenName, string ZielTabellenName)
         {
             using var db_Verbindung = new MySqlConnection(_connectionString);
-
-            LoescheBuchAusTabelle(buch, UrsprungsTabellenName); //Lösche das Buch aus der Quelltabelle
-
-            FuegeBuchEin(buch, ZielTabellenName); //Füge das buch der Zieltabelle hinzu
+            // Löschen des Datensatzes aus der Ursprungstabelle
+            LoescheBuchAusTabelle(buch, UrsprungsTabellenName); 
+            // Einfügen des Datensatzes in die Zieltabelle
+            FuegeBuchEin(buch, ZielTabellenName);
         }
 
+        // Löschen eines Datensatzes aus einer Tabelle
         public void LoescheBuchAusTabelle(BuchDTO buch, string Tabellenname)
         {
-            //Datenbankverbindung aufbauen und Befehl zum Löschen aus der Quelladresse wird hier ausgeführt
+            // Start und Ausführung der Datenbankabfrage zum Löschen eines Datensatzes aus einer Tabelle 
             using var db_Verbindung = new MySqlConnection(_connectionString);
             db_Verbindung.Open();
 
@@ -70,15 +73,15 @@ namespace BuchDatenbank
             using var command = new MySqlCommand(query, db_Verbindung);
             command.Parameters.AddWithValue("titel", buch.Titel);
             command.Parameters.AddWithValue("autor", buch.Autor);
-
             command.ExecuteNonQuery();
 
             db_Verbindung.Close();
         }
 
+        // Einfügen eines Datensatzes in einer Tabelle
         public void FuegeBuchEin(BuchDTO buch, string Tabellenname)
         {
-            //Datenbankverbindung aufbauen und Befehl zum Einfuegen in die Zieladresse wird hier ausgeführt
+            // Start und Ausführung der Datenbankabfrage zum Einfügen eines Datensatzes in eine Tabelle
             using var db_Verbindung = new MySqlConnection(_connectionString);
             db_Verbindung.Open();
 
@@ -86,17 +89,9 @@ namespace BuchDatenbank
             using var command = new MySqlCommand(query, db_Verbindung);
             command.Parameters.AddWithValue("titel", buch.Titel);
             command.Parameters.AddWithValue("autor", buch.Autor);
-
             command.ExecuteNonQuery();
 
             db_Verbindung.Close();
         }
-    }
-
-    public class BuchDTO
-    {
-        public int Id { get; set; }
-        public string? Titel { get; set; }
-        public string? Autor { get; set; }
     }
 }
